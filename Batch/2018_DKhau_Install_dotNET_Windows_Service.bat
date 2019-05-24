@@ -1,5 +1,5 @@
 REM Installs a Windows Service utilizing the InstallUtil helper executable.
-REM Dennis Khau, 4/2019
+REM Dennis Khau, 2018
 @echo off
 
 set frameworkDirectory="C:\Windows\Microsoft.NET\Framework64\v4.0.30319"
