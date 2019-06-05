@@ -1,6 +1,5 @@
 ﻿# This script create the initial web application and application pool in IIS.
 # Includes setting log path instead of default W3SVCXXX, create network shares and assigns ACL/permissions.
-# NOTE:  You may have to import the IIS WebAdministration module.  (Uncomment Line 7)
 # Dennis Khau, 1/2019
 
 param (
@@ -44,18 +43,25 @@ TRY
 	    if ($?) { Write-Host "SUCCESS:  SMB Share Created" } else { throw "Error Encountered" }
 
 	    # Create and configure application in IIS
-	    New-WebAppPool $AppName -Force
-	    if ($?) { Write-Host "SUCCESS:  IIS Web Application Pool $AppName Created" } else { throw "Error Encountered" }
+	    if (-Not (Test-Path IIS:\AppPools\$AppName))
+		{
+			New-WebAppPool $AppName -Force
+			if ($?) { Write-Host "SUCCESS:  IIS Web Application Pool $AppName Created" } else { throw "Error Encountered" }
+		} else { Write-Host "SUCCESS:  IIS Web Application Pool $AppName Exists" }
 	
-        New-WebSite -Name $AppName -PhysicalPath $appDirectory -ApplicationPool $AppName -HostHeader $HostHeader -Port $Port -Force
-	    if ($?) { Write-Host "SUCCESS:  IIS $AppName Created" } else { throw "Error Encountered" }
-	
+		if (-Not (Test-Path IIS:\Sites\$AppName))
+		{
+			New-WebSite -Name $AppName -PhysicalPath $appDirectory -ApplicationPool $AppName -HostHeader $HostHeader -Port $Port -Force
+			if ($?) { Write-Host "SUCCESS:  IIS $AppName Created" } else { throw "Error Encountered" }
+		} else { Write-Host "SUCCESS:  IIS $AppName Exists" }
+		
 	    ### UNTESTED ###
         # Create handler mapping for IISNode (NodeJS apps only)
         if ($IsNodeApp –eq $TRUE)
         {
-            New-WebHandler -Name "iisnode" -Path $NodeRootFile -Modules iisnode -PSPath $AppName
-		    if ($?) { Write-Host "SUCCESS:  IIS Handler Module Created" } else { throw "Error Encountered" }
+			# TODO:  Still needs work...
+            #New-WebHandler -Name "iisnode" -Path $NodeRootFile -Modules iisnode -PSPath $AppName
+		    #if ($?) { Write-Host "SUCCESS:  IIS Handler Module Created" } else { throw "Error Encountered" }
 		
 		    cd $appDirectory
 		    npm i
