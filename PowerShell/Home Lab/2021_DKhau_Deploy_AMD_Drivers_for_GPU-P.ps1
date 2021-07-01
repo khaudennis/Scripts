@@ -104,13 +104,13 @@ if ($storageType -eq "default") {
 try {
     Mount-VHD -Path (Join-Path -Path $driveRoot -ChildPath "HyperV\Virtual Hard Disks\$osDrive") 
 
-    $mountedDrive = Get-DiskImage (Join-Path -Path $driveRoot -ChildPath "HyperV\Virtual Hard Disks\$osDrive") | Get-Disk | Get-Partition | where {$_.DriveLetter -ne "`0"} | Select-Object -Property DriveLetter
+    $mountedDrive = Get-DiskImage (Join-Path -Path $driveRoot -ChildPath "HyperV\Virtual Hard Disks\$osDrive") | Get-Disk | Get-Partition | Where-Object {$_.DriveLetter -ne "`0"} | Select-Object -Property DriveLetter
 
     foreach ($drive in $drivers)
     {
         if ($drive -like "*\DriverStore\FileRepository*") {
-            md (Join-Path -Path ($mountedDrive.DriveLetter + ":") -ChildPath "Windows\System32\HostDriverStore")
-            md (Join-Path -Path ($mountedDrive.DriveLetter + ":") -ChildPath "Windows\System32\HostDriverStore\FileRepository")
+            mkdir (Join-Path -Path ($mountedDrive.DriveLetter + ":") -ChildPath "Windows\System32\HostDriverStore")
+            mkdir (Join-Path -Path ($mountedDrive.DriveLetter + ":") -ChildPath "Windows\System32\HostDriverStore\FileRepository")
             Copy-Item -Path (Join-Path -Path "c:" -ChildPath $drive) -Destination (Join-Path -Path ($mountedDrive.DriveLetter + ":") -ChildPath "Windows\System32\HostDriverStore\FileRepository") -Recurse -force
         } else {
             Copy-Item -Path (Join-Path -Path "c:" -ChildPath $drive) -Destination (Join-Path -Path ($mountedDrive.DriveLetter + ":") -ChildPath $drive) -Recurse -force
