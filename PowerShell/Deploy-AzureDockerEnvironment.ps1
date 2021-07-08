@@ -24,7 +24,7 @@ TRY
 	$ResourceGroupName = "RG-$TagProjectName-$EnvironmentAbbr-$RegionAbbr-$ResourceNo"
 	New-AzResourceGroup -Name "$ResourceGroupName" -Location "$Region" -Tag $tags
 	
-	
+	#WIP
 } CATCH {
 	Write-Error $_
 }
