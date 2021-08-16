@@ -1,0 +1,36 @@
+version: '2'
+
+volumes:
+  data1:
+    name: kerberos_cam1_data
+  web1:
+    name: kerberos_cam1_web
+  data2:
+    name: kerberos_cam2_data
+  web2:
+    name: kerberos_cam2_web
+
+services:
+  cam1:
+    image: kerberos/kerberos
+    volumes:
+      - data1:/etc/opt/kerberosio/config
+      - data1:/etc/opt/kerberosio/capture
+      - data1:/etc/opt/kerberosio/logs
+      - web1:/var/www/web/config
+    ports:
+      - "8081:80"
+      - "16661:8889"
+    privileged: true
+
+  cam2:
+    image: kerberos/kerberos
+    volumes:
+      - data2:/etc/opt/kerberosio/config
+      - data2:/etc/opt/kerberosio/capture
+      - data2:/etc/opt/kerberosio/logs
+      - web2:/var/www/web/config
+    ports:
+      - "8082:80"
+      - "16662:8889"
+    privileged: true

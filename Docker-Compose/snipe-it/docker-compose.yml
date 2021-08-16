@@ -1,0 +1,51 @@
+version: '3'
+
+volumes:
+  snipe:
+    external: true
+    name: snipe_data
+  db:
+    external: true
+    name: snipe_db
+  backup:
+    external: true
+    name: snipe_backup
+
+services:
+  snipe-mysql:
+    container_name: snipe-mysql
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=snipe
+      - MYSQL_USER=snipe
+    expose:
+      - "3306"
+
+  snipe-it:
+    image: snipe/snipe-it
+    volumes:
+      - snipe:/var/lib/snipeit 
+      - backup:/app/backups
+    environment:
+      - MYSQL_HOST=snipe-mysql
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=snipe
+      - MYSQL_USER=snipe
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_KEY=${APP_KEY}
+      - APP_URL=${APP_URL}
+      - APP_TIMEZONE=US/Eastern
+      - APP_LOCALE=en
+    ports:
+      - "8001:80"
+    privileged: true
+    depends_on:
+      - snipe-mysql
