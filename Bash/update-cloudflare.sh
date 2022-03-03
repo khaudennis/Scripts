@@ -2,6 +2,7 @@
 
 # Source:  https://gist.github.com/Tras2/cba88201b17d765ec065ccbedfb16d9a
 # Prerequisite:  curl, jq
+#   sudo apt update && sudo apt upgrade -y && sudo apt install jq curl -y
 # Save script in script directory, make it executable:
 #   chmod +x <name.sh> (update-cloudflare.sh)
 # Modify zone, dnsrecords, email and key to match Cloudflare instance.
